@@ -1,7 +1,8 @@
 import Weapon from './weapon'
 import Animator from './animator'
+import settings from './gameSettings'
 
-var map = getMap('map');
+var map = getMap(settings.startlevel);
 
 var gun = new Weapon();
 
@@ -17,7 +18,7 @@ var ceilingTiles = []
 
 var player = {}
 
-const berryAnim = new Animator([165, 166])
+const berryAnim = new Animator([165, 166], 20)
 
 function initialState()
 {
@@ -27,11 +28,12 @@ function initialState()
         onAir: true,
         speed: 1,
         position: {
-            x: 10,
-            y: 0
+            x: 50,
+            y: 5
         },
         sprite: 153,
-        jumping: false
+        jumping: false,
+        flip: false
     };
     
     camera = {
@@ -42,8 +44,8 @@ function initialState()
         }
     }
 
-    landTiles = [91, 16, 17, 18, 42, 13, 12, 29, 45];
-    ceilingTiles = [91, 16, 17, 18, 42, 13, 12];
+    landTiles = settings.landTiles;
+    ceilingTiles = settings.ceilingTiles;
 
     mapPosition = {
         x: 0,
@@ -55,19 +57,35 @@ function initialState()
 
 initialState();
 
+var gameRunning = false;
+
 //▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
 // Update is called once per frame
 exports.update = function () 
 {
+    if(!gameRunning)
+    {
+        gameLoop;
+        gameRunning = true;
+    }
+};
+
+const gameLoop = setInterval(() => {
     let state = gamepad;
     cls();
 
     // if button press move player
-	if (state.btn.left > 0 && !checkLeft()) move(-1);
-    if (state.btn.right > 0 && !checkRight()) move(1);
-    if (state.btnp.up && !player.onAir && !checkCeiling()) jump();
-    if (state.btnp.A) gun.fireWeapon();
-    if (state.btnp.B) initialState();
+	if (state.btn.left > 0 && !checkLeft()){
+        move(-1);
+        player.flip = true;
+    } 
+    if (state.btn.right > 0 && !checkRight()){
+        move(1)
+        player.flip = false;
+    };
+    if (state.btn.up > 0 && !player.onAir && !player.jumping && !checkCeiling()) jump();
+    if (state.btn.A > 0 && gun.canShoot) gun.fireWeapon();
+    if (state.btn.B > 0) initialState();
 
     if(player.jumping && state.btn.up > 0 && !checkCeiling())
     {
@@ -95,12 +113,12 @@ exports.update = function ()
     // draw background
     draw(map, mapPosition.x, mapPosition.y);
     // draw player
-    drawPlayer();
+    drawPlayer(player.flip);
 
-    berryAnim.playAnimation(60, 60, 167);
+    //berryAnim.playAllAnimations(map);
 
     fps++;
-};
+}, 16);
 
 function move(direction)
 {
@@ -118,18 +136,16 @@ function move(direction)
 
 function jump()
 {
-    if(!player.onAir)
-    {
-        player.jumping = true;
-        setTimeout(() => {
-            player.jumping = false;
-        }, 500);
-    }
+
+    player.jumping = true;
+    setTimeout(() => {
+        player.jumping = false;
+    }, 500);
 }
 
-function drawPlayer()
+function drawPlayer(flip)
 {
-    sprite(player.sprite, mapPosition.x + player.position.x, mapPosition.y + player.position.y)
+    sprite(player.sprite, mapPosition.x + player.position.x, mapPosition.y + player.position.y, flip)
 }
 
 function gravity()

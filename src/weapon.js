@@ -5,6 +5,7 @@ class Weapon {
     constructor() {
         this.currentSlot = 0;
         this.bullets = [1,1,1,1,1,1];
+        this.canShoot = true;
     }
     /**
      * Returns the current bullet array
@@ -38,6 +39,9 @@ class Weapon {
         this.currentSlot = Math.round(Math.random() * 5);
         console.log("New slot: " + this.currentSlot);
         console.log("Balas: " + this.getBullets());
+
+        this.canShoot = false;
+        // RELOAD
     }
 }
 
