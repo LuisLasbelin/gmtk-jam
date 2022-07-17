@@ -1,9 +1,9 @@
 const settings = {
     devMode: true,
-    landTiles: [91, 16, 17, 18, 42, 13, 12, 29, 45, 33, 32],
-    ceilingTiles: [91, 16, 17, 18, 42, 13, 12],
-    bananaSprites: [165, 166],
-    startlevel: 'map'
+    landTiles: [0, 1, 2, 3],
+    ceilingTiles: [0, 2, 3],
+    bananaSprites: [64, 65, 66, 67, 68, 69],
+    startlevel: 'nivel'
 }
 
 export default settings;

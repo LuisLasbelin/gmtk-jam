@@ -46,7 +46,7 @@
 		"right": 68,
 		"A": 32,
 		"B": 88,
-		"reset": 82
+		"R": 82
 	},
 	"touchEvent": {
 		"multiTouch": false,

@@ -4,12 +4,13 @@ class Animator {
      * @param {array} frames array of images in order
      * @param {number} frameDuration number of fps between animations
      */
-    constructor(frames, frameDuration)
+    constructor(frames, frameDuration, spriteMode)
     {
         this.frames = frames;
         this.frameDuration = frameDuration;
         this.currFrame = 0;
         this.time = 0;
+        this.spriteMode = spriteMode;
     }
     /**
      * Play next frame
@@ -20,7 +21,8 @@ class Animator {
     playAnimation(x, y)
     {
         this.time++;
-        sprite(this.frames[this.currFrame], x, y);
+        if(this.spriteMode) sprite(this.frames[this.currFrame], x, y);
+        if(!this.spriteMode) draw(this.frames[this.currFrame], x, y);
         if(this.time >= this.frameDuration)
         {
             // when it gets to the end, repeat

@@ -1,3 +1,5 @@
+import { checkObstacles } from "./utils";
+
 class Weapon {
     /**
      * Weapon of 6 bullets constructor
@@ -16,14 +18,11 @@ class Weapon {
     }
     loadWeapon()
     {
-        this.bullets.forEach(bullet => {
-            if(bullet == 0)
-            {
-                bullet = 1;
-            }
-        });
+        for (let i = 0; i < this.bullets.length; i++) {
+            this.bullets[i] = 1;
+        }
     }
-    fireWeapon()
+    fireWeapon(player, enemies)
     {
         // FIRE WEAPON
         console.log("Shot fired: " + this.currentSlot + " was " + this.bullets[this.currentSlot]);
@@ -31,6 +30,7 @@ class Weapon {
         if(bullet > 0)
         {
             //FIRE
+            checkObstacles(player, enemies);
             
             this.bullets[this.currentSlot] = 0;
         }
@@ -42,7 +42,15 @@ class Weapon {
 
         this.canShoot = false;
         // RELOAD
+        setTimeout(() => {
+            this.canShoot = true;
+        }, 2000);
     }
+    nextRollFrame()
+    {
+        
+    }
+    
 }
 
 export default Weapon;
