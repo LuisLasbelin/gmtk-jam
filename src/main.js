@@ -1,4 +1,5 @@
 import Weapon from './weapon'
+import Animator from './animator'
 
 var map = getMap('map');
 
@@ -15,6 +16,8 @@ var landTiles = []
 var ceilingTiles = []
 
 var player = {}
+
+const berryAnim = new Animator([165, 166])
 
 function initialState()
 {
@@ -34,11 +37,12 @@ function initialState()
     camera = {
         cameraLimit: {
             x: 80,
+            nx: 20,
             y: null
         }
     }
 
-    landTiles = [91, 16, 17, 18, 42, 13, 12];
+    landTiles = [91, 16, 17, 18, 42, 13, 12, 29, 45];
     ceilingTiles = [91, 16, 17, 18, 42, 13, 12];
 
     mapPosition = {
@@ -59,13 +63,13 @@ exports.update = function ()
     cls();
 
     // if button press move player
-	if (state.btn.left > 0) move(-1);
-    if (state.btn.right > 0) move(1);
-    if (state.btnp.up && !player.onAir) jump();
+	if (state.btn.left > 0 && !checkLeft()) move(-1);
+    if (state.btn.right > 0 && !checkRight()) move(1);
+    if (state.btnp.up && !player.onAir && !checkCeiling()) jump();
     if (state.btnp.A) gun.fireWeapon();
     if (state.btnp.B) initialState();
 
-    if(player.jumping && state.btn.up > 0)
+    if(player.jumping && state.btn.up > 0 && !checkCeiling())
     {
         player.position.y -= 1;
     }
@@ -82,7 +86,7 @@ exports.update = function ()
     {
         mapPosition.x -= 1;
     }
-    if(screenX < 1)
+    if(screenX < camera.cameraLimit.nx)
     {
         mapPosition.x += 1;
     }
@@ -92,6 +96,8 @@ exports.update = function ()
     draw(map, mapPosition.x, mapPosition.y);
     // draw player
     drawPlayer();
+
+    berryAnim.playAnimation(60, 60, 167);
 
     fps++;
 };
@@ -172,6 +178,40 @@ function checkCeiling()
     if(map.get(x, y) != null)
     {
         if(ceilingTiles.includes(map.get(x,y).sprite))
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+function checkRight()
+{
+    // get tile position of the player y+1
+    let x = Math.round((player.position.x+4)/8);
+    let y = Math.round(player.position.y/8);
+    //console.log("X: " + x + ", Y: " + y);
+
+    if(map.get(x, y) != null)
+    {
+        if(landTiles.includes(map.get(x,y).sprite))
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+function checkLeft()
+{
+    // get tile position of the player y+1
+    let x = Math.round((player.position.x-4)/8);
+    let y = Math.round(player.position.y/8);
+    //console.log("X: " + x + ", Y: " + y);
+
+    if(map.get(x, y) != null)
+    {
+        if(landTiles.includes(map.get(x,y).sprite))
         {
             return true;
         }
