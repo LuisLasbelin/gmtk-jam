@@ -38,7 +38,6 @@ class Animator {
             // when it gets to the end, repeat
             this.time = 0;
             this.currFrame++;
-            console.log(this.currFrame);
             if(this.currFrame >= this.frames.length) this.currFrame = 0;
         }
         tiles.forEach(tile => {

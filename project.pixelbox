@@ -51,7 +51,7 @@
 	"touchEvent": {
 		"multiTouch": false,
 		"disableContextMenu": true,
-		"hideMousePointer": true
+		"hideMousePointer": false
 	},
 	"gamepad": {
 		"analogToDpad": true,

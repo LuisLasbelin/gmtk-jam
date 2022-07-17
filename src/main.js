@@ -18,11 +18,19 @@ var ceilingTiles = []
 
 var player = {}
 
+var bananas = 0;
+
+var bananaLocation = [{x:28,y:32}, {x:70,y:130}]
+
 const berryAnim = new Animator([165, 166], 20)
 
 function initialState()
 {
     console.log('INITIAL STATE');
+
+    bananas = 0;
+
+    map = getMap(settings.startlevel);
 
     player = {
         onAir: true,
@@ -33,6 +41,7 @@ function initialState()
         },
         sprite: 153,
         jumping: false,
+        jumptime: 350,
         flip: false
     };
     
@@ -85,11 +94,12 @@ const gameLoop = setInterval(() => {
     };
     if (state.btn.up > 0 && !player.onAir && !player.jumping && !checkCeiling()) jump();
     if (state.btn.A > 0 && gun.canShoot) gun.fireWeapon();
-    if (state.btn.B > 0) initialState();
+    if (state.btn.B > 0 && settings.devMode) initialState();
 
     if(player.jumping && state.btn.up > 0 && !checkCeiling())
     {
         player.position.y -= 1;
+        player.onAir = true;
     }
     else
     {
@@ -115,7 +125,11 @@ const gameLoop = setInterval(() => {
     // draw player
     drawPlayer(player.flip);
 
-    //berryAnim.playAllAnimations(map);
+    checkBanana();
+
+    berryAnim.playAllAnimations(map);
+    pen(11);
+    print("Banana: " + bananas, [50,50]);
 
     fps++;
 }, 16);
@@ -136,11 +150,11 @@ function move(direction)
 
 function jump()
 {
-
+    console.log("Boing!");
     player.jumping = true;
     setTimeout(() => {
         player.jumping = false;
-    }, 500);
+    }, player.jumptime);
 }
 
 function drawPlayer(flip)
@@ -229,6 +243,25 @@ function checkLeft()
     {
         if(landTiles.includes(map.get(x,y).sprite))
         {
+            return true;
+        }
+    }
+    return false;
+}
+
+function checkBanana()
+{
+    // get tile position of the player y+1
+    let x = Math.round(player.position.x/8);
+    let y = Math.round(player.position.y/8);
+    //console.log("X: " + x + ", Y: " + y);
+
+    if(map.get(x, y) != null)
+    {
+        if(settings.bananaSprites.includes(map.get(x,y).sprite))
+        {
+            map.remove(x,y);
+            bananas++;
             return true;
         }
     }
