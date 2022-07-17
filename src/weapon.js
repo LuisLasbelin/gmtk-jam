@@ -1,4 +1,5 @@
 import { checkObstacles } from "./utils";
+var bleeper = require('pixelbox/bleeper');
 
 class Weapon {
     /**
@@ -18,9 +19,15 @@ class Weapon {
     }
     loadWeapon()
     {
+        bleeper.sounds[0].play();
         for (let i = 0; i < this.bullets.length; i++) {
             this.bullets[i] = 1;
         }
+        this.canShoot = false;
+        // RELOAD
+        setTimeout(() => {
+            this.canShoot = true;
+        }, 2000);
     }
     fireWeapon(player, enemies)
     {
@@ -29,10 +36,15 @@ class Weapon {
         let bullet = this.bullets[this.currentSlot];
         if(bullet > 0)
         {
+            bleeper.sounds[1].play();
             //FIRE
             checkObstacles(player, enemies);
             
             this.bullets[this.currentSlot] = 0;
+        }
+        else
+        {
+            bleeper.sounds[2].play();
         }
 
         // SELECT NEW BULLET SLOT
@@ -48,7 +60,7 @@ class Weapon {
     }
     nextRollFrame()
     {
-        
+
     }
     
 }

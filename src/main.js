@@ -1,6 +1,7 @@
 import Weapon from './weapon'
 import Animator from './animator'
 import settings from './gameSettings'
+var bleeper = require('pixelbox/bleeper');
 var pointerEvents = require("pixelbox/pointerEvents");
 
 pointerEvents.onPress(function (x, y, pointerID, event) {
@@ -142,14 +143,10 @@ function initialState()
 
     gun = new Weapon();
 
-    uiRevolver.revolver1 = new Image();
-    uiRevolver.revolver1.src = '../assets/revolver_1.png'
-    uiRevolver.revolver2 = new Image();
-    uiRevolver.revolver2.src = '../assets/revolver_2.png'
-    uiRevolver.bala = new Image();
-    uiRevolver.bala.src = '../assets/bala.png'
-    uiRevolver.indicator = new Image();
-    uiRevolver.indicator.src = '../assets/indicator.png'
+    uiRevolver.revolver1 = assets.sprites.revolver_1;
+    uiRevolver.revolver2 = assets.sprites.revolver_2;
+    uiRevolver.bala = assets.sprites.bala;
+    uiRevolver.indicator = assets.sprites.indicator;
 
     revolverAnim = new Animator([uiRevolver.revolver1, uiRevolver.revolver2], 16, false);
 }
@@ -266,6 +263,7 @@ function move(direction)
 function jump()
 {
     console.log("Boing!");
+    bleeper.sounds[3].play();
     player.jumping = true;
     setTimeout(() => {
         player.jumping = false;
@@ -377,6 +375,7 @@ function checkBanana()
         {
             map.remove(x,y);
             bananas++;
+            bleeper.sounds[4].play();
             return true;
         }
     }
